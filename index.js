@@ -9,39 +9,72 @@ server.get('/', (req, res) => {
   res.send("Hello there! Here is a web server!")
 });
 
-server.get('/users', (req, res) => {
+server.get('/api/users', (req, res) => {
   const users = [
     {
       id: 1,
-      name: 'Mario'
+      name: 'Mario',
+      bio: "World's worst plumber"
     },
     {
       id: 2,
-      name: 'Donkey Kong'
+      name: 'Donkey Kong',
+      bio: "Not even remotely like a donkey"
     },
     {
       id: 3,
-      name: 'Link'
+      name: 'Link',
+      bio: "Speechless hero"
     },
   ];
 
-  res.status(200).send(users);
+  res.status(200).json(users);
 })
 
-server.post('/users', (req, res) => {
-  res.status(201).json({ url: '/users', operation: 'POST' });
+server.post('/api/users', (req, res) => {
+  if (req.body.name === undefined || !req.body.bio) {
+    res
+      .status(400)
+      .json({ errorMessage: "Please provide name and bio for the user."});
+  } else {
+    res.status(201).json({ url: '/users', operation: 'POST' });
+  }
 })
 
-server.get('/users/:id', (req, res) => {
-  res.status(200)
+server.get('/api/users/:id', (req, res) => {
+  if (!req.body.id) {
+    res
+      .status(404)
+      .json({ errorMessage: "The user with the specified ID does not exist." })
+  } else {
+    res.status(200)
+  }
 })
 
-server.delete('/users/:id', (req, res) => {
-  res.status(204);
+server.delete('/api/users/:id', (req, res) => {
+  if (!req.body.id) {
+    res
+      .status(404)
+      .json({ errorMessage: "The user with the specified ID does not exist." })
+  } else {
+    res.status(204);
+  }
 })
 
-server.put('/users/:id', (req, res) => {
-  res.status(200).json({ url: '/users/:id', operation: 'PUT'})
+server.put('/api/users/:id', (req, res) => {
+  if (!req.body.id) {
+    res
+      .status(404)
+      .json({ errorMessage: "The user with the specified ID does not exist." })
+  } else if (req.body.name === undefined || !req.body.bio) {
+    res
+      .status(400)
+      .json({ errorMessage: "Please provide name and bio for the user."});
+  } else {
+    res
+      .status(200)
+      .json({ url: '/users/:id', operation: 'PUT'})
+  }
 })
 
 //-------------------------------------
